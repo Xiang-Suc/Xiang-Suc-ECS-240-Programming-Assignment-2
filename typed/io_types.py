@@ -69,10 +69,10 @@ def read_from_types(filename):
 # pt 6 8
 def write_to_output(filename, realizable_pairs):
     file = open(filename, 'w')
-    for i in realizable_pairs:
-        if realizable_pairs is None:
-            file.write('\n')
-        else:
+    if realizable_pairs is None:
+        file.write('\n')
+    else:
+        for i in realizable_pairs:
             file.write('pt ' + str(i) + ' ' + str(realizable_pairs[i]) + '\n')
 
     file.close()
@@ -92,3 +92,5 @@ if __name__ == '__main__':
     print(input_statements)
 
     write_to_output(output_file, realizable_pairs)
+    
+    
