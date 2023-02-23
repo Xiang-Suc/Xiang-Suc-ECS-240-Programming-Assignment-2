@@ -1,5 +1,6 @@
 import sys
 import copy
+import pfi
 
 # input_nodes: [1, 2, 3, 4, 5, 6, 7, 8]
 # input_types: {1: 3,
@@ -16,11 +17,10 @@ import copy
 def read_from_types(filename):
     file = open(filename, 'r')
     read = file.readlines()
-    input_nodes = []
-    input_types = {}
-    input_statements = {}
-    left_list = []
-    right_list = []    
+    node_2_lvl = {};
+    lvl_2_node = {}
+    L = -1
+    statements = []
 
     for line in read:
         # p n s
@@ -31,33 +31,30 @@ def read_from_types(filename):
     
         # t u i
         if line.startswith('t'):
-            indexs = line.split(' ')
+            indexs = line.split()
             node = int(indexs[1])
-            num_stars = int(indexs[2])
-            input_types[node] = num_stars
-            
+            level = int(indexs[2])
+            node_2_lvl[node] = level
+            if not (level in lvl_2_node):
+                lvl_2_node[level] = set()
+            lvl_2_node[level].add(node)
+            L = max(L, level)
+
         # s d1 v1 d2 v2
         if line.startswith('s'):
             keys = line.split(' ')
-            left_num_star = int(keys[1])
-            left_node = int(keys[2])
-            right_prefix = int(keys[3])
-            right_node = int(keys[4])
-            
-            left_list.append(copy.copy((left_num_star, left_node)))
-            right_list.append(copy.copy((right_prefix, right_node)))
+            deref_l = int(keys[1])
+            node_l = int(keys[2])
+            deref_r = int(keys[3])
+            node_r = int(keys[4])
+            statements.append([deref_l, node_l, deref_r, node_r])
             
         # c . . .
         if line.startswith('c'):
             continue
-    input_statements['left'] = left_list
-    input_statements['right'] = right_list
     file.close()
-    
-    for i in range(n):
-        input_nodes.append(i+1)
         
-    return input_nodes, input_types, input_statements
+    return node_2_lvl, lvl_2_node, L, statements
 
 
 # pt 1 3
@@ -85,7 +82,11 @@ if __name__ == '__main__':
 
     input_file = sys.argv[1]
     output_file = sys.argv[2]
-    input_nodes, input_types, input_statements = read_from_types(input_file)
+    node_2_lvl, lvl_2_node, L, statements = read_from_types(input_file)
+
+    g = pfi.pfi(node_2_lvl, lvl_2_node, L, statements)
+
+
     realizable_pairs = {1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 5: 8, 6: 8} 
     print(input_nodes)
     print(input_types)
