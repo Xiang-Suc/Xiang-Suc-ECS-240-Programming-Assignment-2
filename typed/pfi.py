@@ -57,22 +57,26 @@ def pfi(node_2_lvl, lvl_2_node, L, statements):
 
 		lam = {}
 		change = True
+
 		for s in s_ccp:
 			if s[0] == 0:
 				if not (s[1] in lam):
-					lam[s[1]] = s[2]
+					lam[s[1]] = set([s[2]])
 		for s in s_ccp:
 			if s[0] == 1:
-				lam[s[1]] = lam[s[2]]
+				if s[1] not in lam:
+					lam[s[1]] = set()
+				lam[s[1]] = lam[s[1]].union(lam[s[2]])
 		
 		for lam_key in lam:
 			if not (lam_key in G):
 				G[lam_key] = set()
-			G[lam_key].add(lam[lam_key])
+			G[lam_key] = G[lam_key].union(lam[lam_key])
 
 		lam1 = set()
 		for key in lam:
-			lam1.add((key, lam[key]))
+			for val in lam[key]:
+				lam1.add((key, val))
 
 		lam2 = set()
 		for s_x in s_ccp:
