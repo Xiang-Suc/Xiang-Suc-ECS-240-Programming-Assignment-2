@@ -70,8 +70,8 @@ def write_to_output(filename, realizable_pairs):
         file.write('\n')
     else:
         for i in realizable_pairs:
-            for k in realizable_pairs[i]:
-                file.write('pt ' + str(i) + ' ' + str(k) + '\n')
+            for val in realizable_pairs[i]:
+                file.write('pt ' + str(i) + ' ' + str(val) + '\n')
 
     file.close()
 
@@ -88,11 +88,7 @@ if __name__ == '__main__':
     g = pfi.pfi(node_2_lvl, lvl_2_node, L, statements)
 
 
-    realizable_pairs = {1: {3}, 2: {4}, 3: {5}, 4: {6}, 5: {7}, 5: {8}, 6: {8}} 
-    print(node_2_lvl)
-    print(lvl_2_node)
-    print(statements)
-
-    write_to_output(output_file, realizable_pairs)
+    realizable_pairs = {1: 3, 2: 4, 3: 5, 4: 6, 5: 7, 5: 8, 6: 8} 
+    write_to_output(output_file, g )
     
     
