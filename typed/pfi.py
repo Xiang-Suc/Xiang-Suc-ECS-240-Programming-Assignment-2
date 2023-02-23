@@ -21,7 +21,7 @@ F = set()
 
 def pfi(node_2_lvl, lvl_2_node, L, statements):
 
-	for l in range(1, L + 1):
+	for l in reversed(range(1, L + 1)):
 		
 		v_ccp = []
 		c_ccp = []
@@ -50,8 +50,8 @@ def pfi(node_2_lvl, lvl_2_node, L, statements):
 					for q_2 in lvl_2_node[l]:
 						if q_1 == q_2:
 							continue
-						all_paths_1 = find_all_paths(G, q_1, p_1)
-						all_paths_2 = find_all_paths(G, q_2, p_2)
+						all_paths_1 = find_all_paths(G, p_1, q_1)
+						all_paths_2 = find_all_paths(G, p_2, q_2)
 						if exists_disjoint(all_paths_1, all_paths_2, F):
 							s_ccp.add((1, q_1, q_2))
 
@@ -63,7 +63,7 @@ def pfi(node_2_lvl, lvl_2_node, L, statements):
 					lam[s[1]] = s[2]
 		for s in s_ccp:
 			if s[0] == 1:
-				lam[s[1]] = s[2]
+				lam[s[1]] = lam[s[2]]
 		
 		for lam_key in lam:
 			if not (lam_key in G):
@@ -86,6 +86,7 @@ def pfi(node_2_lvl, lvl_2_node, L, statements):
 		lam2_size = len(lam2)
 		while change:
 			change = False
+			newLam2 = set().union(lam2)
 			for element in lam2:
 				element_X = element[0][0]
 				element_small_x = element[0][1]
@@ -93,17 +94,18 @@ def pfi(node_2_lvl, lvl_2_node, L, statements):
 				element_small_y = element[1][1]
 				for z in s_ccp:
 					if z[0] == 0 and z[1] != element_X:
-						lam2.add(((element_X, element_small_x), (z[1], z[2])))
-						lam2.add(((z[1], z[2]), (element_X, element_small_x)))
+						newLam2.add(((element_X, element_small_x), (z[1], z[2])))
+						newLam2.add(((z[1], z[2]), (element_X, element_small_x)))
 					if z[0] == 1 and z[2] == element_X and z[1] != element_X:
-						lam2.add(((element_X, element_small_x), (z[1], element_small_x)))
-						lam2.add(((z[1], element_small_x), (element_X, element_small_x)))
+						newLam2.add(((element_X, element_small_x), (z[1], element_small_x)))
+						newLam2.add(((z[1], element_small_x), (element_X, element_small_x)))
 					if z[0] == 1 and z[2] == element_X and z[1] != element_Y:
-						lam2.add(((z[1], element_small_x), (element_Y, element_small_y)))
-						lam2.add(((element_Y, element_small_y), (z[1], element_small_x)))
-			if lam2_size != len(lam2):
+						newLam2.add(((z[1], element_small_x), (element_Y, element_small_y)))
+						newLam2.add(((element_Y, element_small_y), (z[1], element_small_x)))
+			if lam2_size != len(newLam2):
 				change = True
-			lam2_size = len(lam2)
+			lam2_size = len(newLam2)
+			lam2 = newLam2
 
 		for lam1_s1 in lam1:
 			for lam1_s2 in lam1:
@@ -146,31 +148,6 @@ def exists_disjoint(paths1, paths2, f_pairs):
 			if is_dis:
 				return True
 	return False
-
-	#for l in layers[:-1]:
-	#	statements = copy.copy(input_statements)
-	#	# algorithm line 1-3
-	#	V_ccp = [key for key, value in input_types.items() if value == l]
-	#	C_ccp = [key for key, value in input_types.items() if value == l - 1]
-	#	S_ccp = {}
-	#	
-	#	# algorithm line 4
-	#	for s in range(statements['right']):
-	#		if statements['right'][s][0] == -1:
-	#			for q in V_ccp:
-	#				for k in range(statements['right']):
-	#					if statements['left'][k][1] == statements['left'][s][1] and statements['right'][k][1] == q and statements['right'][k][0] == -1:
-	#						S_ccp[q] = statements['right'][1]
-	#	
-	#	# algorithm line 5
-	#	forbidden_pairs = {}
-	#	
-	#	# algorithm line 6
-	#	pairs_of_V_ccp = [((i), (i+1) % len(V_ccp)) for i in range(len(V_ccp))]
-	#	for s in range(statements['right']):
-	#		if statements['left'][s][0] > 1 and statements['right'][s][0] > 1:
-	#			for pair in range(pairs_of_V_ccp):
-					
 
 
 if __name__ == '__main__':
